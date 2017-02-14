@@ -1,3 +1,5 @@
+#define VERSION "0.2-beta"
+
 #include "CapacitiveSensor.h"
 #include "SoftwareSerial.h"
 #include "Photosensor.h"
@@ -45,24 +47,25 @@ void loop(){
 void serialEvent(){
 	char received = Serial.read();
 	if(received=='C') serialInterfaceCommand(&Serial);
-	else if(received=='R') relay.setState(1),relay.echoState(&Serial);
-	else if(received=='r') relay.setState(0),relay.echoState(&Serial);
+	else if(received=='R') relay.setState(ON),relay.echoState(&Serial);
+	else if(received=='r') relay.setState(OFF),relay.echoState(&Serial);
 }
 
 void bluetoothEvent(){
 	while(Bluetooth.available()){
 		char received = Bluetooth.read();
 		if(received=='C') serialInterfaceCommand(&Bluetooth);
-		else if(received=='R') relay.setState(1),relay.echoState(&Bluetooth);
-		else if(received=='r') relay.setState(0),relay.echoState(&Bluetooth);
+		else if(received=='R') relay.setState(ON),relay.echoState(&Bluetooth);
+		else if(received=='r') relay.setState(OFF),relay.echoState(&Bluetooth);
+		//Support for use the Android app "AMR_Voice", for voice recognition.
 		else if(received=='*'){
 			String command = "";
 			while(!(received == '#')){
 				received = Bluetooth.read();
 				command += received;
 			}
-			if(command == "acender#") relay.setState(1),relay.echoState(&Bluetooth);
-			else if(command == "apagar#") relay.setState(0),relay.echoState(&Bluetooth);
+			if(command == "acender#") relay.setState(ON),relay.echoState(&Bluetooth);
+			else if(command == "apagar#") relay.setState(OFF),relay.echoState(&Bluetooth);
 		}
 	}
 }
